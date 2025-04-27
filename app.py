@@ -97,7 +97,8 @@ with tab4:
             net_income = fin_data.loc['Net Income', :].iloc[0]
             revenue = fin_data.loc['Total Revenue', :].iloc[0]
             total_assets = bal_data.loc['Total Assets', :].iloc[0]
-            total_liabilities = bal_data.loc['Total Liab', :].iloc[0]
+            total_liabilities = bal_data.loc['Total Liabilities Net Minority Interest', :].iloc[0]
+            #total_liabilities = bal_data.loc['Total Liab', :].iloc[0]
             total_equity = total_assets - total_liabilities
             #total_equity = bal_data.loc['Total Stockholder Equity', :].iloc[0]
 
