@@ -84,9 +84,9 @@ with tab3:
 # --- Tab 4: Live ROE Prediction via yFinance ---
 with tab4:
     st.title("🔍 Live ROE Prediction from Yahoo Finance")
-
+    
     ticker = st.text_input("Enter a stock ticker (e.g., AAPL, MSFT)", value="AAPL")
-
+    
     if st.button("Predict ROE for 2024"):
         stock = yf.Ticker(ticker)
         try:
@@ -94,32 +94,35 @@ with tab4:
             bal_data = stock.balance_sheet
 
             # Extracting 2023 year-end data
-            net_income = fin_data.loc['Net Income', :].iloc[0]
-            revenue = fin_data.loc['Total Revenue', :].iloc[0]
-            total_assets = bal_data.loc['Total Assets', :].iloc[0]
-            total_liabilities = bal_data.loc['Total Liabilities Net Minority Interest', :].iloc[0]
-            #total_liabilities = bal_data.loc['Total Liab', :].iloc[0]
-            total_equity = total_assets - total_liabilities
-            #total_equity = bal_data.loc['Total Stockholder Equity', :].iloc[0]
+            net_income_2023 = fin_data.loc['Net Income', :].iloc[0]
+            revenue_2023 = fin_data.loc['Total Revenue', :].iloc[0]
+            total_assets_2023 = bal_data.loc['Total Assets', :].iloc[0]
+            total_liabilities_2023 = bal_data.loc['Total Liabilities Net Minority Interest', :].iloc[0]
+            total_equity_2023 = total_assets_2023 - total_liabilities_2023
 
-            # Calculate DuPont components
-            PMR = net_income / revenue
-            ATR = revenue / total_assets
-            EQM = total_assets / total_equity
+            # Calculate 2023 DuPont components
+            PMR = net_income_2023 / revenue_2023
+            ATR = revenue_2023 / total_assets_2023
+            EQM = total_assets_2023 / total_equity_2023
 
             st.write(f"**Profit Margin Ratio (PMR):** {PMR:.4f}")
             st.write(f"**Asset Turnover Ratio (ATR):** {ATR:.4f}")
             st.write(f"**Equity Multiplier (EQM):** {EQM:.4f}")
 
-            # Predict ROE
+            # Predict 2024 ROE
             input_features = pd.DataFrame([[PMR, ATR, EQM]], columns=["PMR", "ATR", "EQM"])
             predicted_roe = model.predict(input_features)[0]
-
             st.success(f"Predicted ROE for 2024: {predicted_roe:.2%}")
 
-            # Optional: Compare with actual ROE from 2023
-            roe_actual = (net_income / total_equity)
-            st.info(f"Actual ROE (2023): {roe_actual:.2%}")
+            # Now Extract 2024 year-end data (for actual ROE)
+            net_income_2024 = fin_data.loc['Net Income', :].iloc[1]
+            total_assets_2024 = bal_data.loc['Total Assets', :].iloc[1]
+            total_liabilities_2024 = bal_data.loc['Total Liabilities Net Minority Interest', :].iloc[1]
+            total_equity_2024 = total_assets_2024 - total_liabilities_2024
+
+            # Calculate actual 2024 ROE
+            roe_actual_2024 = (net_income_2024 / total_equity_2024)
+            st.info(f"Actual ROE (2024): {roe_actual_2024:.2%}")
 
         except Exception as e:
             st.error(f"Error fetching or calculating data: {e}")
